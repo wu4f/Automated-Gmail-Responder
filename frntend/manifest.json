@@ -1,8 +1,8 @@
 {
-  "name": "Gmail Extension",
+  "name": "PSU Automated Gmail Responder",
   "version": "0.0.1",
   "manifest_version": 3,
-  "description": "Automated email responder for Portland State University Computer Science advisors",
+  "description": "Automated email responder for Portland State University built by Department of Computer Science capstone students (Spring 2024)",
   "content_scripts": [
     {
       "js": ["script.js"],
@@ -10,7 +10,7 @@
       "run_at": "document_end"
     }
   ],
-  "permissions": ["activeTab", "storage", "scripting"],
+  "permissions": ["storage"],
   "action": {
     "default_popup": "index.html",
     "default_title": "Additional Prompt Guidelines"
