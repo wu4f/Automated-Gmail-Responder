@@ -3,38 +3,21 @@ import re
 import os
 import requests
 import unidecode
+import itertools
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from urllib.parse import urljoin
+import urllib3
 
-from langchain_community.document_loaders import (
-    PyPDFDirectoryLoader,
-    AsyncChromiumLoader,
-)
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
+from langchain_community.document_loaders.async_html import AsyncHtmlLoader
 from langchain_community.document_transformers import BeautifulSoupTransformer
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema import Document
-import subprocess
-#subprocess.run(["playwright", "install"])
-subprocess.run(["playwright", "install", "--with-deps"])
-
-def save_documents_json(documents, filename):
-    """Saves list of Documents as JSON file"""
-    data = [doc.dict() for doc in documents]
-    with open(filename, "w+") as f:
-        json.dump(data, f)
-
-
-def load_documents_json(filename):
-    """Reads a JSON file and returns a list of Documents"""
-    with open(filename, "r") as f:
-        data: list = json.load(f)
-    return [Document(**doc_dict) for doc_dict in data]
-
 
 def clean_text(text):
     """Replaces unicode characters and strips extra whitespace"""
@@ -42,34 +25,17 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-
 def clean_documents(documents):
     """Cleans page_content text of Documents list"""
     for doc in documents:
         doc.page_content = clean_text(doc.page_content)
     return documents
 
-
-def scrape(filename):
-    """Scrapes URLs listed in file, extracts article text, returns Documents"""
-    # Creates list of URLs
-    with open(filename, "r") as file:
-        sites = [line.rstrip("\n") for line in file]
-
-    # Scrapes list of sites
-    loader = AsyncChromiumLoader(sites)
-    loader.requests_kwargs = {"verify": False}
+def scrape_articles(links):
+    """Scrapes list of links, extracts article text, returns Documents"""
+    # Scrape list of links
+    loader = AsyncHtmlLoader(links, requests_kwargs={"verify":False})
     docs = loader.load()
-    # Filter out anchor tags that do not start with 'https'
-    for doc in docs:
-        soup = BeautifulSoup(doc.page_content, "html.parser")
-        for link in soup.find_all("a", href=True):
-            href = link.get("href")
-            if not href.startswith("https"):
-                link.decompose()  # Remove the anchor tag if href does not start with 'https'
-
-        # Update the content of the document
-        doc.page_content = str(soup)
     # Extract article tag
     transformer = BeautifulSoupTransformer()
     docs_tr = transformer.transform_documents(
@@ -78,20 +44,17 @@ def scrape(filename):
     clean_documents(docs_tr)
     return docs_tr
 
-
 def load_pdf_documents(dir):
     """Loads all PDFs in given directory"""
     loader = PyPDFDirectoryLoader(dir)
     docs = loader.load()
     return docs
 
-
 def chunking(documents):
     """Takes in Documents and splits text into chunks"""
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
     chunks = text_splitter.split_documents(documents)
     return chunks
-
 
 def extract_text(html):
     """Used by loader to extract text from div tag with id of main"""
@@ -100,7 +63,6 @@ def extract_text(html):
     if div_main:
         return div_main.get_text(" ", strip=True)
     return " ".join(soup.stripped_strings)
-
 
 def scrape_recursive(url, depth):
     """Recursively scrapes URL and returns Documents"""
@@ -118,13 +80,11 @@ def scrape_recursive(url, depth):
     clean_documents(docs)
     return docs
 
-
 def load_config(filename):
     """Reads configuration from a JSON file"""
     with open(filename, "r") as f:
         config = json.load(f)
     return config
-
 
 if __name__ == "__main__":
     # loading environment variables
@@ -138,38 +98,35 @@ if __name__ == "__main__":
         # Set the environment variable
         os.environ["OPENAI_API_KEY"] = openai_api_key
         
+    # Load configuration
+    config = load_config("config.json")
+    bulletin_websites = config["bulletin_websites"]
+    cs_website = config["cs_website"]
+    urllib3.disable_warnings()
+
     # Initialize vectorstore
     vectorstore = Chroma(
         embedding_function=OpenAIEmbeddings(), persist_directory="./.chromadb"
     )
 
-    # Gets all the relevent URL's from the CS department and adds it to url.txt file
-    response = requests.get("https://www.pdx.edu/computer-science/")
-    data = response.text
-    soup = BeautifulSoup(data, "html.parser")
-    # Open a file in write mode
-    with open("./urls.txt", "w") as file:
-        for link in soup.find_all("a"):
-            href = link.get("href")
-            if href and "computer-science" in href:
-                full_url = urljoin("https://www.pdx.edu/computer-science/", href)
-                file.write(full_url + "\n")
-
-    file = "./urls.txt"
-    documents = scrape(file)
+    # Gets all the relevent URL's from the CS department landing page, 
+    # scrapes them, chunks them, then adds them to vector database
+    resp = requests.get(cs_website)
+    soup = BeautifulSoup(resp.text,"html.parser")
+    links = {urljoin(cs_website,a['href']) for a in soup.find_all('a', href=True) if any(['computer-science' in a['href'], 'security' in a['href']])}
+    documents = scrape_articles(list(links))
     chunks = chunking(documents)
     vectorstore.add_documents(chunks)
-    
+
+    # Loads all PDF documents in FAQ directory into vector database
     docs = load_pdf_documents("FAQ")  # Load all documents in the directory(success)
     chunks = chunking(docs)  # Split documents into chunks
     vectorstore.add_documents(
         chunks
     )  # Create embeddings and save them in a vector store
 
-    # Load configuration
-    config = load_config("config.json")
-    bulletin_websites = config["bulletin_websites"]
-    # Scraping logic
+    # Scrapes URLs given for Academic Bulletin recursively, chunks them,
+    # then adds them to vector database
     for website in bulletin_websites:
         result = scrape_recursive(website, 12)
         chunks = chunking(result)
