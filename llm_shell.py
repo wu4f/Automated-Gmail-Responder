@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     load_dotenv()
     
-    userPrompt = """Task: Write an email response to the following email from a student with answers to their questions given the following context.  Answer the message with your name (Ella)"""
+    userPrompt = """Task: Write an email response to the following email from a student with answers to their questions given the following context.  Answer the message with my name (Ella)"""
 
     #grabbing the embeddings
     vectorstore = Chroma(
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     llm = ChatOpenAI(model='gpt-3.5-turbo',temperature=0)
 
     rag_prompt = '''
-    Task: Write an email response to the following email from a student with answers to their questions given the following context.
+    Task: Write a short email response to the following email from a student with answers to their questions given the following context.
     
     Email: {email}
     Context: {context}
