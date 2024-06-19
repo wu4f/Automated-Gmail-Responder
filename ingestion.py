@@ -64,7 +64,7 @@ def extract_text(html):
         return div_main.get_text(" ", strip=True)
     return " ".join(soup.stripped_strings)
 
-def scrape_recursive(url, depth):
+def scrape_main(url, depth):
     """Recursively scrapes URL and returns Documents"""
     loader = RecursiveUrlLoader(
         url=url,
@@ -128,6 +128,6 @@ if __name__ == "__main__":
     # Scrapes URLs given for Academic Bulletin recursively, chunks them,
     # then adds them to vector database
     for website in bulletin_websites:
-        result = scrape_recursive(website, 12)
+        result = scrape_main(website, 12)
         chunks = chunking(result)
         vectorstore.add_documents(chunks)
