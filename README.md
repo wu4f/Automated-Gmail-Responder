@@ -57,3 +57,7 @@ Step 5: Delete the older FAQ file by clicking into the file and pressing on the 
 ## Acknowledgements
 
 
+## Local instructions
+Step 1: export OPENAI_API_KEY=...
+Step 2: docker build --build-arg OPENAI_API_KEY=${OPENAI_API_KEY} -f Dockerfile -t agr .
+Step 3: docker run -it --rm -p 8000:8000 -e OPENAI_API_KEY=${OPENAI_API_KEY} agr
