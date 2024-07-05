@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 .chromadb
+.chroma/sqlite3.db
