@@ -125,19 +125,19 @@ if __name__ == "__main__":
     chunks = chunking(documents)
     add_documents(vectorstore, chunks, 300)
 
-    # Gets all the relevent URLs from the undergraduate and graduate
-    # course pages
-    for website in cs_courses_websites:
-        start_time = time.time()
-        resp = requests.get(website)
-        soup = BeautifulSoup(resp.text,"html.parser")
-        links = list({a['href'] for a in soup.find_all('a', href=True) if 'docs.google.com/document' in a['href']})
-        loader = AsyncHtmlLoader(links, requests_kwargs={"verify":False})
-        docs = loader.load()
-        chunks = chunking(docs)
-        add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
-        elapsed_time = time.time() - start_time
-        print(f"time elapsed: {elapsed_time}")
+    # Gets all the relevent URLs from the undergraduate and graduate course pages.  (Leave out for now due to long run-time)
+
+    # for website in cs_courses_websites:
+    #     start_time = time.time()
+    #     resp = requests.get(website)
+    #     soup = BeautifulSoup(resp.text,"html.parser")
+    #     links = list({a['href'] for a in soup.find_all('a', href=True) if 'docs.google.com/document' in a['href']})
+    #     loader = AsyncHtmlLoader(links, requests_kwargs={"verify":False})
+    #     docs = loader.load()
+    #     chunks = chunking(docs)
+    #     add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
+    #     elapsed_time = time.time() - start_time
+    #     print(f"time elapsed: {elapsed_time}")
 
     # Loads all PDF documents in FAQ directory into vector database
     docs = load_pdf_documents("FAQ")  # Load all documents in the directory(success)
