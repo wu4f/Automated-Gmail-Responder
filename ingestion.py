@@ -4,6 +4,7 @@ import os
 import requests
 import unidecode
 import itertools
+import time
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
@@ -86,6 +87,11 @@ def load_config(filename):
         config = json.load(f)
     return config
 
+def add_documents(vectorstore, chunks, n):
+   for i in range(0, len(chunks), n):
+       print(f"{i} of {len(chunks)}")
+       vectorstore.add_documents(chunks[i:i+n])
+
 if __name__ == "__main__":
     # loading environment variables
     load_dotenv()
@@ -102,6 +108,7 @@ if __name__ == "__main__":
     config = load_config("config.json")
     bulletin_websites = config["bulletin_websites"]
     cs_website = config["cs_website"]
+    cs_courses_websites = config["cs_courses_websites"]
     urllib3.disable_warnings()
 
     # Initialize vectorstore
@@ -109,25 +116,37 @@ if __name__ == "__main__":
         embedding_function=OpenAIEmbeddings(), persist_directory="./.chromadb"
     )
 
-    # Gets all the relevent URL's from the CS department landing page, 
+    # Gets all the relevent URLs from the CS department landing page, 
     # scrapes them, chunks them, then adds them to vector database
     resp = requests.get(cs_website)
     soup = BeautifulSoup(resp.text,"html.parser")
-    links = {urljoin(cs_website,a['href']) for a in soup.find_all('a', href=True) if any(['computer-science' in a['href'], 'security' in a['href']])}
-    documents = scrape_articles(list(links))
+    links = list({urljoin(cs_website,a['href']) for a in soup.find_all('a', href=True) if any(['computer-science' in a['href'], 'security' in a['href']])})
+    documents = scrape_articles(links)
     chunks = chunking(documents)
-    vectorstore.add_documents(chunks)
+    add_documents(vectorstore, chunks, 300)
+
+    # Gets all the relevent URLs from the undergraduate and graduate
+    # course pages
+    for website in cs_courses_websites:
+        start_time = time.time()
+        resp = requests.get(website)
+        soup = BeautifulSoup(resp.text,"html.parser")
+        links = list({a['href'] for a in soup.find_all('a', href=True) if 'docs.google.com/document' in a['href']})
+        loader = AsyncHtmlLoader(links, requests_kwargs={"verify":False})
+        docs = loader.load()
+        chunks = chunking(docs)
+        add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
+        elapsed_time = time.time() - start_time
+        print(f"time elapsed: {elapsed_time}")
 
     # Loads all PDF documents in FAQ directory into vector database
     docs = load_pdf_documents("FAQ")  # Load all documents in the directory(success)
     chunks = chunking(docs)  # Split documents into chunks
-    vectorstore.add_documents(
-        chunks
-    )  # Create embeddings and save them in a vector store
+    add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
 
     # Scrapes URLs given for Academic Bulletin recursively, chunks them,
     # then adds them to vector database
     for website in bulletin_websites:
-        result = scrape_main(website, 12)
-        chunks = chunking(result)
-        vectorstore.add_documents(chunks)
+        docs = scrape_main(website, 12)
+        chunks = chunking(docs)
+        add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
