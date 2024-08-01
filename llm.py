@@ -76,3 +76,45 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
     )
     response["output_text"] = re.sub(r"\n", "<br>", response["output_text"])
     return {"response": response["output_text"]}
+
+@app.post("/query")
+async def query_post(request: Request):
+    payload = await request.json()
+    email = payload.get("email")
+    userPrompt = payload.get("userPrompt")
+
+    if not email:
+        return {"error": "Email is required"}, 400
+
+    # Load environment variables
+    load_dotenv()
+
+    # Grabbing the embeddings
+    vectorstore = Chroma(
+        embedding_function=OpenAIEmbeddings(),
+        persist_directory="./.chromadb"
+    )
+    # Initialized the llm model
+    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
+    
+    docs = vectorstore.similarity_search(email)
+    rag_prompt = '''
+    Task: Write an email response to the following email from a student with answers to their questions given the following context.
+    
+    Email: {email}
+    Context: {context}
+    Additional Guidelines: {userPrompt}
+    '''
+
+    prompt = PromptTemplate(template=rag_prompt, input_variables=["context", "email", "userPrompt"])
+
+    chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
+
+    response = chain.invoke(
+        {"input_documents": docs, "email": email, "userPrompt": userPrompt}, return_only_outputs=True
+    )
+    response["output_text"] = re.sub(r"\n", "<br>", response["output_text"])
+    return {"response": response["output_text"]}
+
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=8000)
