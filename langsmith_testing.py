@@ -49,10 +49,10 @@ def generate_response(llm, prompt, email, docs):
     )
     return response
 
-
+"""""
 if __name__ == "__main__":
     # modify the email variable to test different responses
-    email = "What classes do I have to take to complete the Master's program?"
+    email = input("please ask your question:")
     client = Client()
 
     vectorstore = init_vectorstore()
@@ -61,3 +61,21 @@ if __name__ == "__main__":
     prompt = init_prompt()
     response = generate_response(llm, prompt, email, docs)
     print(response)
+"""
+if __name__ == "__main__":
+
+    client = Client()
+    vectorstore = init_vectorstore()
+    llm = init_llm()
+    prompt = init_prompt()
+
+    while True:
+        email = input("Please ask your question (or type 'stop' to end): ")
+        if email.lower() == "stop":
+            print("Exiting the program. Goodbye!")
+            break
+
+        docs = search_vectorstore(vectorstore, email)
+        response = generate_response(llm, prompt, email, docs)
+        print(response)
+

@@ -19,6 +19,7 @@ https://www.pdx.edu/computer-science/bachelor
 https://www.pdx.edu/computer-science/minor
 https://www.pdx.edu/computer-science/bachelors-program-computer-science-capstone
 https://www.pdx.edu/computer-science/internships-and-research
+https://www.pdx.edu/computer-science/mecop-internship-0
 https://www.pdx.edu/computer-science/pcep-internship
 https://www.pdx.edu/computer-science/program-objectives-outcomes
 https://www.pdx.edu/computer-science/graduate
@@ -52,7 +53,10 @@ https://www.pdx.edu/computer-science/student-resources
 https://www.pdx.edu/computer-science/research-areas
 https://www.pdx.edu/computer-science/coronavirus-response
 https://www.pdx.edu/computer-science/chair-statement
+https://www.pdx.edu/computer-science/undergraduate-admission
 https://www.pdx.edu/computer-science/advising-0
 https://www.pdx.edu/computer-science/computer-science-courses
-https://www.pdx.edu/computer-science/forms-and-policies
+https://www.pdx.edu/computer-science/undergraduate-courses
+https://www.pdx.edu/computer-science/internships-and-research
 https://www.pdx.edu/computer-science/postbaccalaureate
+https://www.pdx.edu/computer-science/forms-and-policies

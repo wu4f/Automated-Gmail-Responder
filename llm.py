@@ -1,6 +1,6 @@
 import re
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import PromptTemplate
