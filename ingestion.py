@@ -35,7 +35,7 @@ def clean_documents(documents):
 def scrape_articles(links):
     """Scrapes list of links, extracts article text, returns Documents"""
     # Scrape list of links
-    loader = AsyncHtmlLoader(links, requests_kwargs={"verify":False})
+    loader = AsyncHtmlLoader(links)
     docs = loader.load()
     # Extract article tag
     transformer = BeautifulSoupTransformer()
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     #     elapsed_time = time.time() - start_time
     #     print(f"time elapsed: {elapsed_time}")
 
-    # Loads all PDF documents in FAQ directory into vector database
+    # Loads allpy PDF documents in FAQ directory into vector database
     docs = load_pdf_documents("FAQ")  # Load all documents in the directory(success)
     chunks = chunking(docs)  # Split documents into chunks
     add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store

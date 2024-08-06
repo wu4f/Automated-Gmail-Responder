@@ -1,9 +1,16 @@
-from langchain_community.vectorstores import Chroma
+#from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain.prompts import PromptTemplate
 from langchain.chains.question_answering import load_qa_chain
-from langchain_openai import OpenAIEmbeddings,ChatOpenAI
+#from langchain_openai import OpenAIEmbeddings,ChatOpenAI
+#from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+#from langchain_community.chat_models import ChatOpenAI
 from dotenv import load_dotenv
 import os
+
+
 
 # format the documents
 def format_docs(docs):
@@ -20,11 +27,16 @@ if __name__ == "__main__":
     
     userPrompt = """Task: Write an email response to the following email from a student with answers to their questions given the following context.  Answer the message with my name (Ella)"""
 
-    #grabbing the embeddings
+     #grabbing the embeddings
     vectorstore = Chroma(
         embedding_function=OpenAIEmbeddings(),
         persist_directory="./.chromadb"
     )
+
+    retriever = vectorstore.as_retriever()
+    docs = retriever.vectorstore.get()
+    print(docs['metadatas'])
+    print(docs['documents'])
 
     #initialized the llm model
     llm = ChatOpenAI(model='gpt-3.5-turbo',temperature=0)
@@ -41,6 +53,9 @@ if __name__ == "__main__":
 
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
 
+    
+
+
     while True:
         email = input(">> ")
         if email:
@@ -52,3 +67,4 @@ if __name__ == "__main__":
             print(response["output_text"])
         else:
             break
+
