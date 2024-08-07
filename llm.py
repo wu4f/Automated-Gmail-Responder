@@ -47,7 +47,7 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
     # Grabbing the embeddings
     vectorstore = Chroma(
         embedding_function=OpenAIEmbeddings(),
-        persist_directory="/Users/clairecao/Automated-Gmail-Responder/env/lib/python3.12/site-packages"
+        persist_directory="./.chromadb"
     )
     # Initialize the llm model
     llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
@@ -58,7 +58,7 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
         raise ValueError("No valid question given")
     docs = vectorstore.similarity_search(email)
     rag_prompt = '''
-    Task: Write an email response to the following email from a student with answers to their questions given the following context.
+    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
     
     Email: {email}
     Context: {context}
@@ -83,14 +83,14 @@ async def submit_query(query: QueryModel):
     # Grabbing the embeddings
     vectorstore = Chroma(
         embedding_function=OpenAIEmbeddings(),
-        persist_directory="/Users/clairecao/Automated-Gmail-Responder/env/lib/python3.12/site-packages"
+        persist_directory="./.chromadb"
     )
     # Initialize the llm model
     llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
 
     docs = vectorstore.similarity_search(query.email)
     rag_prompt = '''
-    Task: Write an email response to the following email from a student with answers to their questions given the following context.
+    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
     
     Email: {email}
     Context: {context}

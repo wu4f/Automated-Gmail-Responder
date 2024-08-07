@@ -25,7 +25,9 @@ if __name__ == "__main__":
 
     load_dotenv()
     
-    userPrompt = """Task: Write an email response to the following email from a student with answers to their questions given the following context.  Answer the message with my name (Ella)"""
+    userPrompt = """
+    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
+    """
 
      #grabbing the embeddings
     vectorstore = Chroma(
@@ -33,6 +35,8 @@ if __name__ == "__main__":
         persist_directory="./.chromadb"
     )
 
+    print("ALL RESOURCES HERE")
+    print("RAG database initialized with the following sources.")
     retriever = vectorstore.as_retriever()
     docs = retriever.vectorstore.get()
     print(docs['metadatas'])
@@ -42,7 +46,7 @@ if __name__ == "__main__":
     llm = ChatOpenAI(model='gpt-3.5-turbo',temperature=0)
 
     rag_prompt = '''
-    Task: Write a short email response to the following email from a student with answers to their questions given the following context.
+    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
     
     Email: {email}
     Context: {context}
@@ -52,9 +56,6 @@ if __name__ == "__main__":
     prompt = PromptTemplate(template=rag_prompt, input_variables=["context", "email"])
 
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
-
-    
-
 
     while True:
         email = input(">> ")

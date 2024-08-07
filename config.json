@@ -1,11 +1,8 @@
 {
-    "bulletin_websites": [
-        "https://pdx.smartcatalogiq.com/en/2023-2024/bulletin/maseeh-college-of-engineering-and-computer-science/computer-science/",
-        "https://pdx.smartcatalogiq.com/en/2023-2024/bulletin/courses/cs-computer-science/"
+    "blanchet": [
+        "https://blanchethouse.org/free-food-meal-services/"
     ],
-    "cs_website": "https://www.pdx.edu/computer-science",
-    "cs_courses_websites": [
-        "https://www.pdx.edu/computer-science/undergraduate-courses",
-        "https://www.pdx.edu/computer-science/graduate-courses"
+    "transition project": [
+        "https://www.tprojects.org/"
     ]
 }

@@ -15,10 +15,11 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 from langchain_community.document_loaders.async_html import AsyncHtmlLoader
 from langchain_community.document_transformers import BeautifulSoupTransformer
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema import Document
+from langchain_community.document_loaders import JSONLoader
 
 def clean_text(text):
     """Replaces unicode characters and strips extra whitespace"""
@@ -60,7 +61,7 @@ def chunking(documents):
 def extract_text(html):
     """Used by loader to extract text from div tag with id of main"""
     soup = BeautifulSoup(html, "html.parser")
-    div_main = soup.find("div", {"id": "main"})
+    div_main = soup.find("div", {"class": "main-content"})
     if div_main:
         return div_main.get_text(" ", strip=True)
     return " ".join(soup.stripped_strings)
@@ -92,6 +93,20 @@ def add_documents(vectorstore, chunks, n):
        print(f"{i} of {len(chunks)}")
        vectorstore.add_documents(chunks[i:i+n])
 
+def load_document(loader_class, website_url):
+    """
+    Load a document using the specified loader class and website URL.
+
+    Args:
+    loader_class (class): The class of the loader to be used.
+    website_url (str): The URL of the website from which to load the document.
+
+    Returns:
+    str: The loaded document.
+    """
+    loader = loader_class([website_url])
+    return loader.load()
+
 if __name__ == "__main__":
     # loading environment variables
     load_dotenv()
@@ -106,24 +121,57 @@ if __name__ == "__main__":
         
     # Load configuration
     config = load_config("config.json")
-    bulletin_websites = config["bulletin_websites"]
-    cs_website = config["cs_website"]
-    cs_courses_websites = config["cs_courses_websites"]
+    #bulletin_websites = config["bulletin_websites"]
+    #cs_website = config["cs_website"]
+    blanchet = config["blanchet"]
+    transition_project = config["transition project"]
+    
+    #cs_courses_websites = config["cs_courses_websites"]
     urllib3.disable_warnings()
 
     # Initialize vectorstore
     vectorstore = Chroma(
         embedding_function=OpenAIEmbeddings(), persist_directory="./.chromadb"
     )
+    
+    response = requests.get("https://rosecityresource.streetroots.org/api/query")
+    data = response.json() #make json file
+    data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
+    print(json.dumps(data[0]))
+    with open('data6.jsonl', 'w') as file: #makes new data6.jsonl file
+        for i in range(len(data6)):
+            # Convert the entry to a JSON string
+            json_string = json.dumps(data6[i])
+            # Write the JSON string followed by a newline character to the file
+            file.write(json_string + '\n')
+            #print(json.dumps(data6[i]))
+            int = str(i)
+            print("success for json file" + int)
+    
+    #JSONL LOADER
+
+    loader = JSONLoader(
+        file_path='./data6.jsonl',
+        jq_schema='.',
+        text_content=False,
+        json_lines=True)
+
+    data = loader.load()
+    
+    #add source to vectorstore
+    chunks = chunking(data)
+    add_documents(vectorstore, chunks, 300)
 
     # Gets all the relevent URLs from the CS department landing page, 
     # scrapes them, chunks them, then adds them to vector database
+    """
     resp = requests.get(cs_website)
     soup = BeautifulSoup(resp.text,"html.parser")
     links = list({urljoin(cs_website,a['href']) for a in soup.find_all('a', href=True) if any(['computer-science' in a['href'], 'security' in a['href']])})
     documents = scrape_articles(links)
     chunks = chunking(documents)
     add_documents(vectorstore, chunks, 300)
+    """
 
     # Gets all the relevent URLs from the undergraduate and graduate course pages.  (Leave out for now due to long run-time)
 
@@ -140,6 +188,7 @@ if __name__ == "__main__":
     #     print(f"time elapsed: {elapsed_time}")
 
     # Loads allpy PDF documents in FAQ directory into vector database
+    """
     docs = load_pdf_documents("FAQ")  # Load all documents in the directory(success)
     chunks = chunking(docs)  # Split documents into chunks
     add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
@@ -150,3 +199,4 @@ if __name__ == "__main__":
         docs = scrape_main(website, 12)
         chunks = chunking(docs)
         add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
+    """
