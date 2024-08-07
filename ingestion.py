@@ -136,12 +136,11 @@ if __name__ == "__main__":
     
     response = requests.get("https://rosecityresource.streetroots.org/api/query")
     data = response.json() #make json file
-    data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
-    print(json.dumps(data[0]))
-    with open('data6.jsonl', 'w') as file: #makes new data6.jsonl file
-        for i in range(len(data6)):
+    #data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
+    with open('data.jsonl', 'w') as file: #makes new data6.jsonl file
+        for i in range(len(data)):
             # Convert the entry to a JSON string
-            json_string = json.dumps(data6[i])
+            json_string = json.dumps(data[i])
             # Write the JSON string followed by a newline character to the file
             file.write(json_string + '\n')
             #print(json.dumps(data6[i]))
@@ -151,7 +150,7 @@ if __name__ == "__main__":
     #JSONL LOADER
 
     loader = JSONLoader(
-        file_path='./data6.jsonl',
+        file_path='./data.jsonl',
         jq_schema='.',
         text_content=False,
         json_lines=True)
@@ -161,6 +160,7 @@ if __name__ == "__main__":
     #add source to vectorstore
     chunks = chunking(data)
     add_documents(vectorstore, chunks, 300)
+    print("documents loaded into vectorstore")
 
     # Gets all the relevent URLs from the CS department landing page, 
     # scrapes them, chunks them, then adds them to vector database

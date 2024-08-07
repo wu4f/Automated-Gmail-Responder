@@ -58,8 +58,10 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
         raise ValueError("No valid question given")
     docs = vectorstore.similarity_search(email)
     rag_prompt = '''
-    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
-    
+
+    Task: You are helping a user gain information on social services. Give effecient responses.
+    If you do not know the answer, return 'I don't know'. 
+        
     Email: {email}
     Context: {context}
     Additional Guidelines: {userPrompt}
@@ -90,7 +92,9 @@ async def submit_query(query: QueryModel):
 
     docs = vectorstore.similarity_search(query.email)
     rag_prompt = '''
-    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
+    
+    Task: You are helping a user gain information on social services. Give effecient responses.
+    If you do not know the answer, return 'I don't know'. 
     
     Email: {email}
     Context: {context}

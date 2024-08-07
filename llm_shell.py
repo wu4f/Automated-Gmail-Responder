@@ -26,7 +26,8 @@ if __name__ == "__main__":
     load_dotenv()
     
     userPrompt = """
-    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
+    Task: You are helping a user gain information on social services. Give effecient responses.
+    If you do not know the answer, return 'I don't know'. 
     """
 
      #grabbing the embeddings
@@ -35,18 +36,21 @@ if __name__ == "__main__":
         persist_directory="./.chromadb"
     )
 
+   #prints all the info in vectorstore
+    """
     print("ALL RESOURCES HERE")
     print("RAG database initialized with the following sources.")
     retriever = vectorstore.as_retriever()
     docs = retriever.vectorstore.get()
     print(docs['metadatas'])
     print(docs['documents'])
+    """
 
     #initialized the llm model
     llm = ChatOpenAI(model='gpt-3.5-turbo',temperature=0)
 
     rag_prompt = '''
-    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
+    Task: You are helping a user gain information on social services. Write a thorough response to their question. 
     
     Email: {email}
     Context: {context}
