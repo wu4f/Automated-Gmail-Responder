@@ -26,32 +26,33 @@ if __name__ == "__main__":
     load_dotenv()
     
     userPrompt = """
-    Task: You are helping a user gain information on social services. Give effecient responses.
+   Task: You are helping a user gain information on social services. Give effecient responses. Provide a detailed list of multiple resources for open ended questions.
     If you do not know the answer, return 'I don't know'. 
     """
 
-     #grabbing the embeddings
+    #grabbing the embeddings
     vectorstore = Chroma(
         embedding_function=OpenAIEmbeddings(),
         persist_directory="./.chromadb"
     )
 
    #prints all the info in vectorstore
-    """
+    
     print("ALL RESOURCES HERE")
     print("RAG database initialized with the following sources.")
     retriever = vectorstore.as_retriever()
     docs = retriever.vectorstore.get()
     print(docs['metadatas'])
     print(docs['documents'])
-    """
+    
 
     #initialized the llm model
     llm = ChatOpenAI(model='gpt-3.5-turbo',temperature=0)
 
     rag_prompt = '''
-    Task: You are helping a user gain information on social services. Write a thorough response to their question. 
-    
+
+    Task: You are helping a user gain information on social services. Give effecient responses. Provide a list of multiple resources for open ended questions.
+    If you do not know the answer, return 'I don't know'. 
     Email: {email}
     Context: {context}
     Additional Guidelines: {userPrompt}

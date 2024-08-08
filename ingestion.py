@@ -107,6 +107,213 @@ def load_document(loader_class, website_url):
     loader = loader_class([website_url])
     return loader.load()
 
+import json
+
+# Function to filter entries
+def filter_food_entries(input_file, output_food):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Food':
+                entries.append(entry)
+    
+    with open(output_food, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+input_file = 'data.jsonl'
+output_food = 'food.jsonl'
+
+filter_food_entries(input_file, output_food)
+print(f"Filtered entries saved to {output_food}")
+
+def filter_housingshelter_entries(input_file, output_housingshelter):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Housing & Shelter':
+                entries.append(entry)
+    
+    with open(output_housingshelter, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_housingshelter = 'housingshelter.jsonl'
+filter_housingshelter_entries(input_file, output_housingshelter)
+print(f"Filtered entries saved to {output_housingshelter}")
+
+def filter_goods_entries(input_file, output_goods):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Goods':
+                entries.append(entry)
+    
+    with open(output_goods, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_goods = 'goods.jsonl'
+filter_goods_entries(input_file, output_goods)
+print(f"Filtered entries saved to {output_goods}")
+
+def filter_transit_entries(input_file, output_transit):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Transit':
+                entries.append(entry)
+    
+    with open(output_transit, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_transit = 'transit.jsonl'
+filter_transit_entries(input_file, output_transit)
+print(f"Filtered entries saved to {output_transit}")
+
+def filter_healthwellness_entries(input_file, output_healthwellness):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Health & Wellness':
+                entries.append(entry)
+    
+    with open(output_healthwellness, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_healthwellness = 'healthwellness.jsonl'
+filter_healthwellness_entries(input_file, output_healthwellness)
+print(f"Filtered entries saved to {output_healthwellness}")
+
+def filter_money_entries(input_file, output_money):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Money':
+                entries.append(entry)
+    
+    with open(output_money, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_money = 'money.jsonl'
+filter_money_entries(input_file, output_money)
+print(f"Filtered entries saved to {output_money}")
+
+def filter_caresafety_entries(input_file, output_caresafety):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Care & Safety':
+                entries.append(entry)
+    
+    with open(output_caresafety, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_caresafety = 'caresafety.jsonl'
+filter_caresafety_entries(input_file, output_caresafety)
+print(f"Filtered entries saved to {output_caresafety}")
+
+def filter_work_entries(input_file, output_work):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Work':
+                entries.append(entry)
+    
+    with open(output_work, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_work = 'work.jsonl'
+filter_work_entries(input_file, output_work)
+print(f"Filtered entries saved to {output_work}")
+
+def filter_legal_entries(input_file, output_legal):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Legal':
+                entries.append(entry)
+    
+    with open(output_legal, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_legal = 'legal.jsonl'
+filter_legal_entries(input_file, output_legal)
+print(f"Filtered entries saved to {output_legal}")
+
+def filter_dayservices_entries(input_file, output_dayservices):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Day Services':
+                entries.append(entry)
+    
+    with open(output_dayservices, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_dayservices = 'dayservices.jsonl'
+filter_dayservices_entries(input_file, output_dayservices)
+print(f"Filtered entries saved to {output_dayservices}")
+
+def filter_specializedassistance_entries(input_file, output_specializedassistance):
+    entries = []
+    
+    with open(input_file, 'r') as infile:
+        for line in infile:
+            entry = json.loads(line.strip())
+            if entry.get('general_category') == 'Specialized Assistance':
+                entries.append(entry)
+    
+    with open(output_specializedassistance, 'w') as outfile:
+        for entry in entries:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+
+output_specializedassistance = 'specializedassistance.jsonl'
+filter_specializedassistance_entries(input_file, output_specializedassistance)
+print(f"Filtered entries saved to {output_specializedassistance}")
+
+
+
+
+
 if __name__ == "__main__":
     # loading environment variables
     load_dotenv()
@@ -136,7 +343,7 @@ if __name__ == "__main__":
     
     response = requests.get("https://rosecityresource.streetroots.org/api/query")
     data = response.json() #make json file
-    #data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
+    data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
     with open('data.jsonl', 'w') as file: #makes new data6.jsonl file
         for i in range(len(data)):
             # Convert the entry to a JSON string
@@ -144,11 +351,15 @@ if __name__ == "__main__":
             # Write the JSON string followed by a newline character to the file
             file.write(json_string + '\n')
             #print(json.dumps(data6[i]))
-            int = str(i)
-            print("success for json file" + int)
+            #int = str(i)
+            #print("success for json file" + int)
+
+    #filter food entries
+
     
     #JSONL LOADER
 
+    """
     loader = JSONLoader(
         file_path='./data.jsonl',
         jq_schema='.',
@@ -160,43 +371,7 @@ if __name__ == "__main__":
     #add source to vectorstore
     chunks = chunking(data)
     add_documents(vectorstore, chunks, 300)
-    print("documents loaded into vectorstore")
+    print("documents loaded")
 
-    # Gets all the relevent URLs from the CS department landing page, 
-    # scrapes them, chunks them, then adds them to vector database
     """
-    resp = requests.get(cs_website)
-    soup = BeautifulSoup(resp.text,"html.parser")
-    links = list({urljoin(cs_website,a['href']) for a in soup.find_all('a', href=True) if any(['computer-science' in a['href'], 'security' in a['href']])})
-    documents = scrape_articles(links)
-    chunks = chunking(documents)
-    add_documents(vectorstore, chunks, 300)
-    """
-
-    # Gets all the relevent URLs from the undergraduate and graduate course pages.  (Leave out for now due to long run-time)
-
-    # for website in cs_courses_websites:
-    #     start_time = time.time()
-    #     resp = requests.get(website)
-    #     soup = BeautifulSoup(resp.text,"html.parser")
-    #     links = list({a['href'] for a in soup.find_all('a', href=True) if 'docs.google.com/document' in a['href']})
-    #     loader = AsyncHtmlLoader(links, requests_kwargs={"verify":False})
-    #     docs = loader.load()
-    #     chunks = chunking(docs)
-    #     add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
-    #     elapsed_time = time.time() - start_time
-    #     print(f"time elapsed: {elapsed_time}")
-
-    # Loads allpy PDF documents in FAQ directory into vector database
-    """
-    docs = load_pdf_documents("FAQ")  # Load all documents in the directory(success)
-    chunks = chunking(docs)  # Split documents into chunks
-    add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
-
-    # Scrapes URLs given for Academic Bulletin recursively, chunks them,
-    # then adds them to vector database
-    for website in bulletin_websites:
-        docs = scrape_main(website, 12)
-        chunks = chunking(docs)
-        add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
-    """
+    

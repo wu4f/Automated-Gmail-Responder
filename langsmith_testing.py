@@ -32,7 +32,7 @@ def search_vectorstore(vectorstore, email: str):
 def init_prompt():
     '''Initializes system prompt'''
     rag_prompt = '''
-    Task: You are helping a user gain information on social services. Write a short, concise response to their question. 
+    Task: You are helping a user gain information on social services. Write a thorough response to their question. 
     Email: {email}
     Context: {context}
     '''
