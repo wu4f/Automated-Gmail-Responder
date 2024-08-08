@@ -107,9 +107,7 @@ def load_document(loader_class, website_url):
     loader = loader_class([website_url])
     return loader.load()
 
-import json
-
-# Function to filter entries
+# All Methods to filter entries
 def filter_food_entries(input_file, output_food):
     entries = []
     
@@ -310,10 +308,6 @@ output_specializedassistance = 'specializedassistance.jsonl'
 filter_specializedassistance_entries(input_file, output_specializedassistance)
 print(f"Filtered entries saved to {output_specializedassistance}")
 
-
-
-
-
 if __name__ == "__main__":
     # loading environment variables
     load_dotenv()
@@ -343,35 +337,30 @@ if __name__ == "__main__":
     
     response = requests.get("https://rosecityresource.streetroots.org/api/query")
     data = response.json() #make json file
-    data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
+    #data6 = [data[0], data[1], data[2], data[3], data[4], data[5]]
     with open('data.jsonl', 'w') as file: #makes new data6.jsonl file
         for i in range(len(data)):
-            # Convert the entry to a JSON string
             json_string = json.dumps(data[i])
-            # Write the JSON string followed by a newline character to the file
             file.write(json_string + '\n')
-            #print(json.dumps(data6[i]))
-            #int = str(i)
-            #print("success for json file" + int)
-
-    #filter food entries
-
-    
+        
     #JSONL LOADER
 
-    """
-    loader = JSONLoader(
-        file_path='./data.jsonl',
+    docs = ["food.jsonl", "housingshelter.jsonl", "goods.jsonl", "transit.jsonl",
+            "healthwellness.jsonl", "money,jsonl", "caresafety.jsonl", "work.jsonl",
+            "legal.jsonl", "dayservices.jsonl", "specializedassistance.jsonl"
+            ]
+
+    for i in range(len(docs)):
+        loader = JSONLoader(
+        file_path=docs[i],
         jq_schema='.',
         text_content=False,
         json_lines=True)
 
-    data = loader.load()
+    docs = loader.load()
     
     #add source to vectorstore
-    chunks = chunking(data)
+    chunks = chunking(docs)
     add_documents(vectorstore, chunks, 300)
     print("documents loaded")
-
-    """
     
