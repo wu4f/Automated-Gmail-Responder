@@ -121,13 +121,13 @@ def populate_data(input_file, output_file):
                     entries.append(entry)
         
         with open(output_file, 'a') as outfile:
-            outfile.write(f'The services that provide {categories[i]} are: \n')
+            #outfile.write(f'The services that provide {categories[i]} are: \n')
             for entry in entries:
                 json.dump(entry, outfile)
                 outfile.write('\n')
         
 input_file = 'data.jsonl'
-output_file = 'CategorizedData.jsonl'
+output_file = 'CategorizedData2.jsonl'
 
 populate_data(input_file, output_file)
 
@@ -167,7 +167,7 @@ if __name__ == "__main__":
 
     #JSONL LOADER
     loader = JSONLoader(
-        file_path='./CategorizedData.jsonl',
+        file_path='./CategorizedData2.jsonl',
         jq_schema='.',
         text_content=False,
         json_lines=True

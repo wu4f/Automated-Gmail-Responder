@@ -26,8 +26,8 @@ if __name__ == "__main__":
     load_dotenv()
     
     userPrompt = """
-   Task: You are helping a user gain information on social services. Give effecient responses. Provide a detailed list of multiple resources for open ended questions.
-    If you do not know the answer, return 'I don't know'. 
+    Task: You are helping a user gain information on social services. Give effective responses. 
+    If you do not know the answer, please redirect the user to a related source.
     """
 
     #grabbing the embeddings
@@ -51,8 +51,8 @@ if __name__ == "__main__":
 
     rag_prompt = '''
 
-    Task: You are helping a user gain information on social services. Give effecient responses. Provide a list of multiple resources for open ended questions.
-    If you do not know the answer, return 'I don't know'. 
+    Task: You are helping a user gain information on social services. Give effective responses. 
+    If you do not know the answer, please redirect the user to a related source.
     Email: {email}
     Context: {context}
     Additional Guidelines: {userPrompt}
