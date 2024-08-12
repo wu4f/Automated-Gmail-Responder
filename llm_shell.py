@@ -231,9 +231,9 @@ if __name__ == "__main__":
     
 
     #initialized the llm model
-    llm = ChatOpenAI(model='gpt-4o',temperature=0)
+    llm = ChatOpenAI(model='gpt-4o-mini',temperature=0)
     # llm = GoogleGenerativeAI(
-    #        model="gemini-1.5-pro",
+    #        model="gemini-1.5-flash",
     #        temperature=0)
 
     rag_prompt = '''

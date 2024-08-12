@@ -51,9 +51,9 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
         persist_directory="./.chromadb"
     )
     # Initialize the llm model
-    llm = ChatOpenAI(model='gpt-4o',temperature=0)
+    llm = ChatOpenAI(model='gpt-4o-mini',temperature=0)
     # llm = GoogleGenerativeAI(
-    #        model="gemini-1.5-pro",
+    #        model="gemini-1.5-flash",
     #        temperature=0)
 
     if q is not None:
@@ -92,9 +92,9 @@ async def submit_query(query: QueryModel):
         persist_directory="./.chromadb"
     )
     # Initialize the llm model
-    llm = ChatOpenAI(model='gpt-4o',temperature=0)
+    llm = ChatOpenAI(model='gpt-4o-mini',temperature=0)
     # llm = GoogleGenerativeAI(
-    #        model="gemini-1.5-pro",
+    #        model="gemini-1.5-flash",
     #        temperature=0)
 
     docs = vectorstore.similarity_search(query.email)
