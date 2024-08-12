@@ -51,7 +51,7 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
         persist_directory="./.chromadb"
     )
     # Initialize the llm model
-    llm = ChatOpenAI(model='gpt-4',temperature=0)
+    llm = ChatOpenAI(model='gpt-4o',temperature=0)
     # llm = GoogleGenerativeAI(
     #        model="gemini-1.5-pro",
     #        temperature=0)
@@ -92,7 +92,7 @@ async def submit_query(query: QueryModel):
         persist_directory="./.chromadb"
     )
     # Initialize the llm model
-    llm = ChatOpenAI(model='gpt-4',temperature=0)
+    llm = ChatOpenAI(model='gpt-4o',temperature=0)
     # llm = GoogleGenerativeAI(
     #        model="gemini-1.5-pro",
     #        temperature=0)
