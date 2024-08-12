@@ -268,6 +268,7 @@ if __name__ == "__main__":
         line = input("llm>> ")
         try:
             if line:
+                print("generating response...")
                 result = agent_executor.invoke({"input":line, "email": email, "context": context, "instructions": instructions })
                 print(result["output"])
             else:
