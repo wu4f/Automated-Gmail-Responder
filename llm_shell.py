@@ -222,12 +222,12 @@ if __name__ == "__main__":
         persist_directory="./.chromadb"
     )
 
-   #prints all the info in vectorstore
-    print("RAG database initialized with the following sources.")
-    retriever = vectorstore.as_retriever()
-    docs = retriever.vectorstore.get()
-    print(docs['metadatas'])
-    print(docs['documents'])
+#    #prints all the info in vectorstore
+#     print("RAG database initialized with the following sources.")
+#     retriever = vectorstore.as_retriever()
+#     docs = retriever.vectorstore.get()
+#     print(docs['metadatas'])
+#     print(docs['documents'])
     
 
     #initialized the llm model
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     
     agent = create_react_agent(llm, tools, prompt)
 
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True) 
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False, handle_parsing_errors=True) 
 
     print(f"Welcome to my application.  I am configured with these tools")
     for tool in agent_executor.tools:
