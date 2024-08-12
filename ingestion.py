@@ -107,7 +107,7 @@ def load_document(loader_class, website_url):
     loader = loader_class([website_url])
     return loader.load()
 
-# All Methods to filter entries
+#  Methods to filter entries
 def populate_data(input_file, output_file):
     categories = ["Food", "Housing & Shelter", "Goods", "Transit", "Health & Wellness", "Money", 
                   "Care & Safety", "Work", "Legal", "Day Services", "Specialized Assistance"]
@@ -179,3 +179,4 @@ if __name__ == "__main__":
     chunks = chunking(docs)
     add_documents(vectorstore, chunks, 300)
     print("documents loaded into vectorstore")
+

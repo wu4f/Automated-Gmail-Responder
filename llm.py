@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from langchain.chains.question_answering import load_qa_chain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain_community.chat_models import ChatOpenAI
+from langchain_google_genai import GoogleGenerativeAI
 import uvicorn
 
 # Load environment variables
@@ -50,8 +51,11 @@ def aerllm(q: Union[str, None] = None, userPrompt: Union[str, None] = None):
         persist_directory="./.chromadb"
     )
     # Initialize the llm model
-    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
-    
+    llm = ChatOpenAI(model='gpt-4',temperature=0)
+    # llm = GoogleGenerativeAI(
+    #        model="gemini-1.5-pro",
+    #        temperature=0)
+
     if q is not None:
         email = q
     else:
@@ -88,7 +92,10 @@ async def submit_query(query: QueryModel):
         persist_directory="./.chromadb"
     )
     # Initialize the llm model
-    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0)
+    llm = ChatOpenAI(model='gpt-4',temperature=0)
+    # llm = GoogleGenerativeAI(
+    #        model="gemini-1.5-pro",
+    #        temperature=0)
 
     docs = vectorstore.similarity_search(query.email)
     rag_prompt = '''
@@ -110,6 +117,9 @@ async def submit_query(query: QueryModel):
     )
     response["output_text"] = re.sub(r"\n", "<br>", response["output_text"])
     return {"response": response["output_text"]}
+
+
+
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)
