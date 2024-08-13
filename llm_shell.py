@@ -255,7 +255,7 @@ if __name__ == "__main__":
     
     agent = create_react_agent(llm, tools, prompt)
 
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=False, handle_parsing_errors=True) 
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True) 
 
     print(f"Welcome to my application.  I am configured with these tools")
     for tool in agent_executor.tools:
@@ -276,17 +276,27 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
 
-    #chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
+    # from flask import Flask, request, jsonify
 
-    # while True:
-    #     email = input("llm>> ")
-    #     if email:
-    #         docs = vectorstore.similarity_search(email)
-    #         response = chain.invoke(
-    #             {"input_documents": docs, "email": email, "userPrompt": userPrompt}, return_only_outputs=True
-    #         )
-    #         response["output_text"] = re.sub(r"\n", "<br>", response["output_text"])
-    #         print(response["output_text"])
-    #     else:
-    #         break
+    # app = Flask(__name__)
+
+    # @app.route('/')
+    # def hello():
+    #     return 'Hello, World!'
+
+    # @app.route('/chat', methods=['POST'])
+    # def chat():
+    #     email = 'test'
+    #     context = "You are a LLM providing information about social services."
+    #     instructions = "Use the appropriate tool to answer the user's question."
+    #     print(request.json)
+    #     line=request.json['question']
+    #     result = agent_executor.invoke({"input":line, "email": email, "context": context, "instructions": instructions })
+    #     print(result)
+    #     return result
+
+    # if __name__ == '__main__':
+    #     app.run(host='0.0.0.0', port=6000, debug=True)
+
+
 
