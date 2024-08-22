@@ -129,7 +129,7 @@ def populate_data(input_file, output_file):
 input_file = 'data.jsonl'
 output_file = 'CategorizedData2.jsonl'
 
-populate_data(input_file, output_file)
+#populate_data(input_file, output_file)
 
 if __name__ == "__main__":
     # loading environment variables

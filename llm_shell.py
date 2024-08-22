@@ -147,61 +147,6 @@ def specializedassistance_tool(parameter):
     
     return entries
 
-def chunking(documents):
-    """Takes in Documents and splits text into chunks"""
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
-    chunks = text_splitter.split_documents(documents)
-    return chunks
-
-def add_documents(vectorstore, chunks, n):
-   for i in range(0, len(chunks), n):
-       print(f"{i} of {len(chunks)}")
-       vectorstore.add_documents(chunks[i:i+n])
-
-@tool
-def RAG_tool(parameter):
-    "Useful to find specific information about a service including description, address, website, hours, and phone number."
-    vectorstore = Chroma(
-        embedding_function=OpenAIEmbeddings(), persist_directory="./.chromadb"
-    )
-    #JSONL LOADER
-    loader = JSONLoader(
-        file_path='./CategorizedData2.jsonl',
-        jq_schema='.',
-        text_content=False,
-        json_lines=True
-    )
-
-    docs = loader.load()
-
-    #add source to vectorstore
-    chunks = chunking(docs)
-    add_documents(vectorstore, chunks, 300)
-
-    email = input("llm>> ")
-    docs = vectorstore.similarity_search(email)
-    context = "You are a LLM providing information about social services."
-
-    # rag_chain = (
-    #     {"context": context, "userPrompt": userPrompt, "email": email, "inpute_documents": docs}
-    #     | prompt
-    #     | llm
-    #     | StrOutputParser()
-    # )
-    # response = rag_chain.invoke(email)
-    # return response
-
-    prompt = PromptTemplate(template=rag_prompt, input_variables=["context", "email", "userPrompt"])
-
-    chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
-    instructions = "Use the appropriate tool to answer the user's question."
-
-    response = chain.invoke(
-        {"input_documents": docs, "email": email, "userPrompt": userPrompt, "instructions":instructions}, return_only_outputs=True
-    )
-    response["output_text"] = re.sub(r"\n", "<br>", response["output_text"])
-    return {"response": response["output_text"]}
-
 # run the llm
 def run(llm, prompt, email, docs):
     result = llm.invoke(prompt.format(email=email, context=format_docs(docs)))
@@ -213,7 +158,7 @@ if __name__ == "__main__":
     
     userPrompt = """
     Task: You are helping a user gain information on social services. Give effective responses.
-    If you do not know the answer, please redirect the user to a related source.
+    You must use a tool to answer questions. If you cannot use a tool, say "I don't know"
     """
 
     #grabbing the embeddings
@@ -222,38 +167,17 @@ if __name__ == "__main__":
         persist_directory="./.chromadb"
     )
 
-#    #prints all the info in vectorstore
-#     print("RAG database initialized with the following sources.")
-#     retriever = vectorstore.as_retriever()
-#     docs = retriever.vectorstore.get()
-#     print(docs['metadatas'])
-#     print(docs['documents'])
-    
-
     #initialized the llm model
     llm = ChatOpenAI(model='gpt-4o-mini',temperature=0)
-    # llm = GoogleGenerativeAI(
-    #        model="gemini-1.5-flash",
-    #        temperature=0)
 
-    rag_prompt = '''
-
-    Task: You are helping a user gain information on social services. Give effective responses.  
-    If the user asks for a specific number of resources, pick out that number of resources in the requested category at random.
-    If you do not know the answer, please redirect the user to a related source.
-
-    Instructions: {instructions}
-    Email: {email}
-    Context: {context}
-
-    '''
+    
     base_prompt = hub.pull("langchain-ai/react-agent-template")
-    prompt = base_prompt.partial(rag_prompt=rag_prompt)
+    prompt = base_prompt.partial(instructions = userPrompt)
 
     tools = [food_tool, housingshelter_tool, goods_tool, transit_tool, healthwellness_tool, money_tool, legal_tool, 
             dayservices_tool, specializedassistance_tool]
     
-    agent = create_react_agent(llm, tools, prompt)
+    agent = create_react_agent(llm, tools, base_prompt)
 
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True) 
 
