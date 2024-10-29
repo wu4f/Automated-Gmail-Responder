@@ -150,3 +150,8 @@ if __name__ == "__main__":
         docs = scrape_main(website, 12)
         chunks = chunking(docs)
         add_documents(vectorstore, chunks, 300) # Create embeddings and save them in a vector store
+
+    retriever = vectorstore.as_retriever()
+    docs = retriever.vectorstore.get()
+    print(docs['metadatas'])
+    print(docs['documents'])
